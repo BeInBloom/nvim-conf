@@ -47,6 +47,27 @@ return {
           },
         },
       },
+      autocmds = {
+        python_organize_imports = {
+          cond = function(client, _) return client.name == "ruff" end,
+          {
+            event = "BufWritePre",
+            desc = "Organize Imports (Python)",
+            callback = function(args)
+              local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding(args.buf))
+              params.context = { only = { "source.organizeImports" } }
+              local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 3000)
+              for _, res in pairs(result or {}) do
+                for _, r in pairs(res.result or {}) do
+                  if r.edit then
+                    vim.lsp.util.apply_workspace_edit(r.edit, vim.lsp.util._get_offset_encoding(args.buf))
+                  end
+                end
+              end
+            end,
+          },
+        },
+      },
     },
   },
 
