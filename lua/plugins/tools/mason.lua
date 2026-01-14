@@ -14,6 +14,9 @@ return {
         "gopls",
         "rust_analyzer",
         "vtsls", -- TypeScript/JavaScript LSP
+        "html",
+        "cssls",
+        "emmet_ls", 
       })
     end,
   },
