@@ -4,6 +4,7 @@
 ---@type LazySpec
 return {
   "nvimtools/none-ls.nvim",
+  dependencies = { "nvimtools/none-ls-extras.nvim" },
   opts = function(_, opts)
     -- Base configuration for none-ls
     -- Language-specific sources are added in lang/*.lua files

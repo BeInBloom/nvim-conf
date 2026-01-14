@@ -13,6 +13,7 @@ return {
         "ruff",
         "gopls",
         "rust_analyzer",
+        "vtsls", -- TypeScript/JavaScript LSP
       })
     end,
   },
@@ -23,6 +24,7 @@ return {
         "python", -- debugpy
         "delve",  -- go
         "codelldb", -- rust
+        "js", -- js-debug-adapter
       })
     end,
   },
@@ -33,6 +35,8 @@ return {
         "stylua",
         "golangci-lint", 
         "gofumpt",
+        "prettierd", -- Faster prettier
+        "eslint_d", -- Faster eslint
         -- "black", "isort" -- we use ruff now
       })
     end,
