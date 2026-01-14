@@ -23,6 +23,7 @@ return {
   -- Formatting & Linting via none-ls
   {
       "nvimtools/none-ls.nvim",
+      dependencies = { "gbprod/none-ls-shellcheck.nvim" },
       opts = function(_, opts)
         local null_ls = require "null-ls"
         opts.sources = require("astrocore").list_insert_unique(opts.sources, {
@@ -31,14 +32,14 @@ return {
              -- Indent 2 spaces
              extra_args = { "-i", "2", "-s", "-ci" },
            },
-           -- Linting
-           require("none-ls.diagnostics.shellcheck").with {
+           -- Linting (via separate plugin)
+           require("none-ls-shellcheck.diagnostics").with {
               command = vim.fn.stdpath("data") .. "/mason/bin/shellcheck",
               condition = function()
                 return vim.fn.executable(vim.fn.stdpath("data") .. "/mason/bin/shellcheck") == 1
               end,
            },
-           require("none-ls.code_actions.shellcheck").with {
+           require("none-ls-shellcheck.code_actions").with {
               command = vim.fn.stdpath("data") .. "/mason/bin/shellcheck",
               condition = function()
                 return vim.fn.executable(vim.fn.stdpath("data") .. "/mason/bin/shellcheck") == 1
