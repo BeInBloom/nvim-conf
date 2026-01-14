@@ -10,8 +10,15 @@ return {
     opts = {
       server = {
         on_attach = function(client, bufnr)
-          -- Register keybindings if needed, though AstroLSP handles most
+          -- Inject AstroLSP keybindings and logic
+          require("astrolsp").on_attach(client, bufnr)
         end,
+        -- Ensure capabilities are shared
+        capabilities = vim.tbl_deep_extend(
+          "force",
+          vim.lsp.protocol.make_client_capabilities(),
+          require("astrolsp").capabilities or {}
+        ),
         default_settings = {
           -- rust-analyzer language server configuration
           ["rust-analyzer"] = {
