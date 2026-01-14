@@ -33,13 +33,15 @@ return {
            },
            -- Linting
            null_ls.builtins.diagnostics.shellcheck.with {
+              command = vim.fn.stdpath("data") .. "/mason/bin/shellcheck",
               condition = function()
-                return vim.fn.executable("shellcheck") == 1
+                return vim.fn.executable(vim.fn.stdpath("data") .. "/mason/bin/shellcheck") == 1
               end,
            },
            null_ls.builtins.code_actions.shellcheck.with {
+              command = vim.fn.stdpath("data") .. "/mason/bin/shellcheck",
               condition = function()
-                return vim.fn.executable("shellcheck") == 1
+                return vim.fn.executable(vim.fn.stdpath("data") .. "/mason/bin/shellcheck") == 1
               end,
            },
         })
