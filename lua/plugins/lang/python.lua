@@ -22,6 +22,9 @@ return {
               or vim.fn.getcwd()
           end,
           single_file_support = true,
+          capabilities = {
+            offsetEncoding = { "utf-8" },
+          },
           settings = {
             python = {
               pyrefly = {
@@ -34,9 +37,9 @@ return {
         ruff = {
           cmd = { "ruff", "server" },
           filetypes = { "python" },
-          -- Force UTF-16 to match Pyrefly (which defaults to UTF-16)
+          -- Force UTF-8 to match Pyrefly and Neovim default
           capabilities = {
-            offsetEncoding = { "utf-16" },
+            offsetEncoding = { "utf-8" },
           },
           root_dir = require("lspconfig").util.root_pattern("pyproject.toml", "ruff.toml", ".ruff.toml", ".git"),
           settings = {
@@ -49,21 +52,35 @@ return {
       },
       autocmds = {
         python_organize_imports = {
-          cond = function(client, _) return client.name == "ruff" end,
+          cond = function(client, _)
+              return client.name == "ruff" and client.supports_method("textDocument/codeAction")
+          end,
           {
             event = "BufWritePre",
             desc = "Organize Imports (Python)",
             callback = function(args)
-              local params = vim.lsp.util.make_range_params(nil, vim.lsp.util._get_offset_encoding(args.buf))
-              params.context = { only = { "source.organizeImports" } }
-              local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 3000)
-              for _, res in pairs(result or {}) do
-                for _, r in pairs(res.result or {}) do
-                  if r.edit then
-                    vim.lsp.util.apply_workspace_edit(r.edit, vim.lsp.util._get_offset_encoding(args.buf))
+               -- Use pcall to prevent saving from failing if Ruff errors out
+               local status = pcall(function()
+                  local clients = vim.lsp.get_clients({ bufnr = args.buf, name = "ruff" })
+                  local client = clients[1]
+                  if not client then return end
+                  
+                  local encoding = client.offset_encoding or "utf-8"
+                  local params = vim.lsp.util.make_range_params(nil, encoding)
+                  params.context = { only = { "source.organizeImports" }, diagnostics = {} }
+                  
+                  local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 1000)
+                  for _, res in pairs(result or {}) do
+                    for _, r in pairs(res.result or {}) do
+                      if r.edit then
+                        vim.lsp.util.apply_workspace_edit(r.edit, encoding)
+                      end
+                    end
                   end
-                end
-              end
+               end)
+               if not status then
+                  -- Optional: print("Ruff organize imports failed")
+               end
             end,
           },
         },
