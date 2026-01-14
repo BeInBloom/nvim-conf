@@ -6,17 +6,16 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
         "lua_ls",
-        -- "pyrefly", -- Installed manually via python.lua logic if needed, or here. 
-        -- logic in python.lua uses absolute path, so it expects it to be there. 
-        -- Let's ensure them here for safety.
         "pyrefly", 
         "ruff",
         "gopls",
         "rust_analyzer",
-        "vtsls", -- TypeScript/JavaScript LSP
+        "vtsls", -- TS/JS
         "html",
         "cssls",
         "emmet_ls", 
+        "bashls",
+        -- "fish_lsp", -- Skipped (stability)
       })
     end,
   },
@@ -38,9 +37,10 @@ return {
         "stylua",
         "golangci-lint", 
         "gofumpt",
-        "prettierd", -- Faster prettier
-        "eslint_d", -- Faster eslint
-        -- "black", "isort" -- we use ruff now
+        "prettierd",
+        "eslint_d",
+        "shfmt",
+        "shellcheck",
       })
     end,
   },
