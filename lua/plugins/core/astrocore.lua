@@ -23,10 +23,9 @@ return {
       underline = true,
     },
     -- passed to `vim.filetype.add`
-    filetypes = {
-    -- See :h vim.filetype.add
+
     filetypes = { extension = {}, filename = {}, pattern = {} },
-    
+
     -- vim options (vim.opt.<key>)
     options = {
       opt = {
@@ -38,17 +37,17 @@ return {
       },
       g = {
         -- vim.g.<key>
-        -- NOTE: `mapleader` and `maplocalleader` must be set in lazy_setup.lua
+        -- NOTE: mapleader/localleader in lazy_setup.lua
       },
     },
-    
+
     -- Mappings (n: normal mode, etc.)
     mappings = {
       n = {
-         -- Buffer navigation
+        -- Buffer navigation
         ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
-        
+
         -- Close buffer
         ["<Leader>bd"] = {
           function()
@@ -58,14 +57,8 @@ return {
           end,
           desc = "Close buffer from tabline",
         },
-        
-        -- ["<Leader>b"] = { desc = "Buffers" },
-      },
-    },
-
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
       },
     },
   },
+
 }
