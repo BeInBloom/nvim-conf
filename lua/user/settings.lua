@@ -1,1 +1,2 @@
-vim.cmd [[colorscheme tokyonight-night]]
+-- User settings
+-- Colorscheme is configured in plugins/core/astroui.lua
