@@ -32,8 +32,16 @@ return {
              extra_args = { "-i", "2", "-s", "-ci" },
            },
            -- Linting
-           null_ls.builtins.diagnostics.shellcheck,
-           null_ls.builtins.code_actions.shellcheck,
+           null_ls.builtins.diagnostics.shellcheck.with {
+              condition = function()
+                return vim.fn.executable("shellcheck") == 1
+              end,
+           },
+           null_ls.builtins.code_actions.shellcheck.with {
+              condition = function()
+                return vim.fn.executable("shellcheck") == 1
+              end,
+           },
         })
       end,
   },
