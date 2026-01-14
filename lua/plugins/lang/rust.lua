@@ -10,17 +10,16 @@ return {
     opts = {
       server = {
         on_attach = function(client, bufnr)
-          -- Inject AstroLSP keybindings and logic
+          -- AstroLSP bindings
           require("astrolsp").on_attach(client, bufnr)
         end,
-        -- Ensure capabilities are shared
+        -- Share capabilities
         capabilities = vim.tbl_deep_extend(
           "force",
           vim.lsp.protocol.make_client_capabilities(),
           require("astrolsp").capabilities or {}
         ),
         default_settings = {
-          -- rust-analyzer language server configuration
           ["rust-analyzer"] = {
             cargo = {
               allFeatures = true,
@@ -29,7 +28,7 @@ return {
                 enable = true,
               },
             },
-            -- Add clippy lints for Rust
+            -- Clippy lints
             checkOnSave = {
               allFeatures = true,
               command = "clippy",
@@ -52,13 +51,12 @@ return {
     end,
   },
 
-  -- Ensure we don't duplicate rust_analyzer setup in astrolsp if using rustaceanvim
+  -- Disable independent rust_analyzer (let rustaceanvim frame it)
   {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
     opts = {
       handlers = {
-        -- set rust_analyzer handler to false to let rustaceanvim handle it
         rust_analyzer = false, 
       },
       filetypes = {

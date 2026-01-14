@@ -13,7 +13,7 @@ return {
         "ruff",
       },
       config = {
-        -- Pyrefly: Type checker from Meta
+        -- Pyrefly: Type checker
         pyrefly = {
           cmd = { vim.fn.stdpath "data" .. "/mason/bin/pyrefly", "lsp" },
           filetypes = { "python" },
@@ -28,16 +28,16 @@ return {
           settings = {
             python = {
               pyrefly = {
-                displayTypeErrors = "force-on", -- Force enable type errors
+                displayTypeErrors = "force-on",
               },
             },
           },
         },
-        -- Ruff: Fast linter & formatter
+        -- Ruff: Linter & Formatter
         ruff = {
           cmd = { "ruff", "server" },
           filetypes = { "python" },
-          -- Force UTF-8 to match Pyrefly and Neovim default
+          -- Force UTF-8 (align clients)
           capabilities = {
             offsetEncoding = { "utf-8" },
           },
@@ -88,13 +88,13 @@ return {
     },
   },
 
-  -- DAP (Debug Adapter Protocol) for Python
+  -- DAP (Debug Adapter Protocol)
   {
     "mfussenegger/nvim-dap-python",
     ft = "python",
     dependencies = { "mfussenegger/nvim-dap" },
     config = function()
-      -- Path to debugpy installed via Mason
+      -- Path to debugpy (Mason)
       local mason_path = vim.fn.stdpath "data" .. "/mason/packages/debugpy/venv/bin/python"
       require("dap-python").setup(mason_path)
 
@@ -109,7 +109,7 @@ return {
         {
           type = "python",
           request = "launch",
-          name = "Launch with arguments",
+          name = "Launch (Args)",
           program = "${file}",
           args = function()
             local args_string = vim.fn.input "Arguments: "
@@ -119,9 +119,9 @@ return {
         {
           type = "python",
           request = "launch",
-          name = "Launch file (External Libs)", 
+          name = "Launch file (Ext Libs)", 
           program = "${file}",
-          justMyCode = false, -- Allow stepping into libraries
+          justMyCode = false, -- Step into libs
         },
         {
           type = "python",

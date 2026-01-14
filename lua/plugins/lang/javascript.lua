@@ -11,7 +11,7 @@ return {
       config = {
         vtsls = {
           on_attach = function(client)
-             -- Disable formatting from vtsls to let prettierd handle it
+             -- Formatting handled by Prettier
              client.server_capabilities.documentFormattingProvider = false
              client.server_capabilities.documentRangeFormattingProvider = false
           end,

@@ -15,7 +15,7 @@ return {
           root_dir = require("lspconfig").util.root_pattern("go.work", "go.mod", ".git"),
           settings = {
             gopls = {
-              gofumpt = true, -- A stricter gofmt
+              gofumpt = true, -- Strict gofmt
               codelenses = {
                 gc_details = false,
                 generate = true,
@@ -37,17 +37,17 @@ return {
               },
               analyses = {
                 unusedparams = true,
-                shadow = true, -- Check for shadowed variables
+                shadow = true, -- Shadowed vars
                 nilness = true,
                 unusedwrite = true,
                 useany = true,
-                ST1000 = false, -- Incorrect or missing package comment
-                ST1020 = false, -- Missing function doc comment
-                ST1021 = false, -- Missing type doc comment
-                ST1022 = false, -- Missing variable doc comment
+                ST1000 = false, -- Pkg comment
+                ST1020 = false, -- Func doc
+                ST1021 = false, -- Type doc
+                ST1022 = false, -- Var doc
               },
               staticcheck = true,
-              semanticTokens = true, -- Experimental: semantic highlighting
+              semanticTokens = true,
             },
           },
         },
@@ -100,7 +100,7 @@ return {
       },
     },
     opts = {
-      -- Explicitly configure delve path
+      -- Explicitly configure delve
       delve = {
         path = vim.fn.stdpath "data" .. "/mason/bin/dlv",
         initialize_configurations = true,
@@ -111,7 +111,7 @@ return {
     config = function(_, opts)
       require("dap-go").setup(opts)
       
-      -- Manually define configurations to keep menu clean
+      -- Manual cleanly configs
       local dap = require "dap"
       dap.configurations.go = {
         {
@@ -122,7 +122,7 @@ return {
         },
         {
           type = "go",
-          name = "Debug (Arguments)",
+          name = "Debug (Args)",
           request = "launch",
           program = "${file}",
           args = function()
@@ -136,7 +136,7 @@ return {
           request = "launch",
           program = "${file}",
           buildFlags = function()
-            return vim.fn.input "Build Flags: " -- e.g. "-tags=integration"
+            return vim.fn.input "Build Flags: "
           end,
         },
         {

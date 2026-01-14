@@ -6,14 +6,14 @@ return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
   opts = {
-    -- Core LSP features
+    -- Core features
     features = {
       codelens = true,
       inlay_hints = false,
       semantic_tokens = true,
     },
 
-    -- Format on save
+    -- Formatting settings
     formatting = {
       format_on_save = {
         enabled = true,
