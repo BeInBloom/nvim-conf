@@ -17,7 +17,7 @@ return {
             buffer = bufnr,
             callback = function()
               -- Remove unused imports (like Go's goimports)
-              local params = vim.lsp.util.make_range_params()
+              local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
               params.context = { only = { "source.organizeImports" }, diagnostics = {} }
               local result = vim.lsp.buf_request_sync(bufnr, "textDocument/codeAction", params, 1000)
               for _, res in pairs(result or {}) do
