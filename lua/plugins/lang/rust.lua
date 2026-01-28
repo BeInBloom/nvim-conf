@@ -12,23 +12,18 @@ return {
         on_attach = function(client, bufnr)
           require("astrolsp").on_attach(client, bufnr)
 
-          -- Organize imports + Format on save for Rust
+          -- Keybinding: Organize imports (remove unused)
+          vim.keymap.set("n", "<Leader>oi", function()
+            vim.lsp.buf.code_action({
+              context = { only = { "source.organizeImports" }, diagnostics = {} },
+              apply = true,
+            })
+          end, { buffer = bufnr, desc = "Organize imports" })
+
+          -- Format on save for Rust (rustfmt only)
           vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = bufnr,
             callback = function()
-              -- Remove unused imports (like Go's goimports)
-              local params = vim.lsp.util.make_range_params(0, client.offset_encoding)
-              params.context = { only = { "source.organizeImports" }, diagnostics = {} }
-              local result = vim.lsp.buf_request_sync(bufnr, "textDocument/codeAction", params, 1000)
-              for _, res in pairs(result or {}) do
-                for _, r in pairs(res.result or {}) do
-                  if r.edit then
-                    vim.lsp.util.apply_workspace_edit(r.edit, client.offset_encoding)
-                  end
-                end
-              end
-
-              -- Format
               vim.lsp.buf.format({
                 bufnr = bufnr,
                 async = false,
