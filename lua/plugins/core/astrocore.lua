@@ -64,6 +64,9 @@ return {
 
         -- LSP CodeLens
         ["<Leader>lG"] = { function() vim.lsp.codelens.run() end, desc = "LSP CodeLens Run" },
+
+        -- Save all buffers
+        ["<Leader>W"] = { "<cmd>wall<cr>", desc = "Save all buffers" },
       },
     },
   },
