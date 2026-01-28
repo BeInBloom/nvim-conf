@@ -38,6 +38,7 @@ return {
         spell = false,
         signcolumn = "yes",
         wrap = false,
+        scrolloff = 15,
       },
       g = {
         -- vim.g.<key>
