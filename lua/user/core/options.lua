@@ -1,2 +1,0 @@
--- User options
--- (colorscheme is set in user/settings.lua)

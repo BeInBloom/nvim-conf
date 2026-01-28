@@ -5,15 +5,25 @@
 return {
   {
     "mrcjkb/rustaceanvim",
-    version = "^5", -- Recommended
+    version = "^5",
     ft = { "rust" },
     opts = {
       server = {
         on_attach = function(client, bufnr)
-          -- AstroLSP bindings
           require("astrolsp").on_attach(client, bufnr)
+
+          -- Format on save for Rust (like gofmt - uses defaults if no rustfmt.toml)
+          vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = bufnr,
+            callback = function()
+              vim.lsp.buf.format({
+                bufnr = bufnr,
+                async = false,
+                timeout_ms = 3000,
+              })
+            end,
+          })
         end,
-        -- Share capabilities
         capabilities = vim.tbl_deep_extend(
           "force",
           vim.lsp.protocol.make_client_capabilities(),
@@ -24,23 +34,20 @@ return {
             cargo = {
               allFeatures = true,
               loadOutDirsFromCheck = true,
-              buildScripts = {
-                enable = true,
-              },
+              buildScripts = { enable = true },
             },
-            -- Clippy lints
-            checkOnSave = {
+            checkOnSave = true,
+            check = {
               allFeatures = true,
               command = "clippy",
               extraArgs = { "--no-deps" },
             },
             procMacro = {
               enable = true,
-              ignored = {
-                ["async-trait"] = { "async_trait" },
-                ["napi-derive"] = { "napi" },
-                ["async-recursion"] = { "async_recursion" },
-              },
+            },
+            -- Use default rustfmt settings (like gofmt approach)
+            rustfmt = {
+              extraArgs = {},
             },
           },
         },

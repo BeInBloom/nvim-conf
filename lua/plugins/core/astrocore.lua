@@ -2,8 +2,6 @@
 -- See :h astrocore for docs
 
 ---@type LazySpec
-
----@type LazySpec
 return {
   "AstroNvim/astrocore",
   ---@type AstroCoreOpts
@@ -16,6 +14,12 @@ return {
       diagnostics = { virtual_text = true, virtual_lines = false },
       highlighturl = true,
       notifications = true,
+    },
+    -- Configure formatting options
+    formatting = {
+      format_on_save = {
+        enabled = true, -- enable or disable format on save globally
+      },
     },
     -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
     diagnostics = {
@@ -57,6 +61,9 @@ return {
           end,
           desc = "Close buffer from tabline",
         },
+
+        -- LSP CodeLens
+        ["<Leader>lG"] = { function() vim.lsp.codelens.run() end, desc = "LSP CodeLens Run" },
       },
     },
   },

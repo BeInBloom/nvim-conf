@@ -21,7 +21,7 @@ return {
         ignore_filetypes = {},
       },
       disabled = {},
-      timeout_ms = 500,
+      timeout_ms = 2000,
     },
 
     -- Servers are defined in lang/*.lua

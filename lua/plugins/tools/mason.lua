@@ -9,7 +9,7 @@ return {
         "pyrefly", 
         "ruff",
         "gopls",
-        "rust_analyzer",
+        -- rust_analyzer managed by rustaceanvim
         "vtsls", -- TS/JS
         "html",
         "cssls",
