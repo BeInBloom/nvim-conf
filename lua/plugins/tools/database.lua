@@ -1,5 +1,7 @@
+-- Database: vim-dadbod-ui
+-- SQL client with completion support
+
 return {
-  -- Valid database UI
   {
     "kristijanhusak/vim-dadbod-ui",
     dependencies = {
@@ -13,22 +15,7 @@ return {
       "DBUIFindBuffer",
     },
     init = function()
-      -- Your DBUI configuration
       vim.g.db_ui_use_nerd_fonts = 1
-    end,
-  },
-
-  -- Add CMP source for dadbod
-  {
-    "hrsh7th/nvim-cmp",
-    opts = function(_, opts)
-      -- Add "vim-dadbod-completion" source
-      local cmp = require "cmp"
-      opts.sources = cmp.config.sources(
-        require("astrocore").list_insert_unique(opts.sources, { 
-          { name = "vim-dadbod-completion" } 
-        })
-      )
     end,
   },
 }

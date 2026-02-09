@@ -71,6 +71,10 @@ return {
               symbolMatcher = "fuzzy",
               semanticTokens = true,
               staticcheck = true,
+              
+              -- go.work support
+              expandWorkspaceToModule = true,
+              directoryFilters = { "-**/node_modules", "-**/.git", "-.idea", "-.vscode" },
             },
           },
         },

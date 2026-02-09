@@ -1,3 +1,6 @@
+-- Neotest: Testing framework
+-- Supports Go, Python, Rust
+
 return {
   "nvim-neotest/neotest",
   dependencies = {
@@ -12,9 +15,36 @@ return {
   config = function()
     require("neotest").setup {
       adapters = {
-        require "neotest-go",
-        require "neotest-python",
-        require "rustaceanvim.neotest",
+        -- Go adapter with experimental options for go.work support
+        require("neotest-go")({
+          experimental = {
+            test_table = true,
+          },
+          -- Recursively discover tests in subdirectories
+          recursive_run = true,
+          -- Arguments to pass to `go test`
+          args = { "-count=1" },
+        }),
+        require("neotest-python")({
+          dap = { justMyCode = false },
+          runner = "pytest",
+        }),
+        require("rustaceanvim.neotest"),
+      },
+      -- Status signs
+      status = {
+        virtual_text = true,
+        signs = true,
+      },
+      -- Output settings
+      output = {
+        enabled = true,
+        open_on_run = "short",
+      },
+      -- Discovery settings
+      discovery = {
+        enabled = true,
+        concurrent = 1,
       },
     }
   end,
@@ -29,6 +59,11 @@ return {
       "<Leader>Tf",
       function() require("neotest").run.run(vim.fn.expand "%") end,
       desc = "Run file",
+    },
+    {
+      "<Leader>Td",
+      function() require("neotest").run.run(vim.fn.getcwd()) end,
+      desc = "Run all tests in directory",
     },
     {
       "<Leader>TS",
@@ -49,6 +84,11 @@ return {
       "<Leader>Tp",
       function() require("neotest").output_panel.toggle() end,
       desc = "Toggle Output Panel",
+    },
+    {
+      "<Leader>TD",
+      function() require("neotest").run.run { strategy = "dap" } end,
+      desc = "Debug nearest test",
     },
   },
 }
