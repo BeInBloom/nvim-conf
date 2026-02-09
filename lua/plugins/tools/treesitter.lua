@@ -7,12 +7,17 @@ return {
   "nvim-treesitter/nvim-treesitter",
   opts = {
     ensure_installed = {
-      "lua",
-      "vim",
-      "go",
+      "lua", "vim", "vimdoc",
+      "go", "gomod", "gosum",
       "python",
       "rust",
-      -- add more arguments for adding more treesitter parsers
+      "javascript", "typescript", "tsx",
+      "json", "yaml", "toml",
+      "html", "css",
+      "bash",
+      "markdown", "markdown_inline",
+      "dockerfile",
+      "sql",
     },
   },
 }

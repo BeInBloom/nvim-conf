@@ -6,14 +6,14 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
         "lua_ls",
-        "pyrefly", 
+        "ty",
         "ruff",
         "gopls",
         -- rust_analyzer managed by rustaceanvim
         "vtsls", -- TS/JS
         "html",
         "cssls",
-        "emmet_ls", 
+        "emmet_ls",
         "bashls",
         -- "fish_lsp", -- Skipped (stability)
       })

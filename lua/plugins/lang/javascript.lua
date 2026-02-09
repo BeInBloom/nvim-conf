@@ -50,12 +50,6 @@ return {
           },
         },
       },
-      formatting = {
-         -- Control formatting here
-         format_on_save = {
-            allow_filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
-         },
-      },
     },
   },
 

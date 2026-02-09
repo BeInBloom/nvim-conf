@@ -17,7 +17,17 @@ return {
     formatting = {
       format_on_save = {
         enabled = true,
-        allow_filetypes = {},
+        allow_filetypes = {
+          "lua",
+          "python",
+          "go", "gomod",
+          "rust",
+          "javascript", "javascriptreact", "typescript", "typescriptreact",
+          "html", "css", "scss", "less", "json", "yaml", "toml",
+          "sh", "bash",
+          "markdown",
+          "dockerfile",
+        },
         ignore_filetypes = {},
       },
       disabled = {},

@@ -1,5 +1,5 @@
 -- Python Language Support
--- pyrefly (type checker from Meta) + ruff (linter & formatter) + debugpy
+-- ty (type checker from Astral/Ruff team) + ruff (linter & formatter) + debugpy
 
 ---@type LazySpec
 return {
@@ -9,38 +9,24 @@ return {
     ---@type AstroLSPOpts
     opts = {
       servers = {
-        "pyrefly",
+        "ty",
         "ruff",
       },
       config = {
-        -- Pyrefly: Type checker
-        pyrefly = {
-          cmd = { vim.fn.stdpath "data" .. "/mason/bin/pyrefly", "lsp" },
+        -- ty: Type checker & LSP from Astral (same team as Ruff)
+        ty = {
+          cmd = { "ty", "server" },
           filetypes = { "python" },
           root_dir = function(fname)
             return require("lspconfig").util.root_pattern("pyproject.toml", "setup.py", "setup.cfg", ".git")(fname)
               or vim.fn.getcwd()
           end,
           single_file_support = true,
-          capabilities = {
-            offsetEncoding = { "utf-8" },
-          },
-          settings = {
-            python = {
-              pyrefly = {
-                displayTypeErrors = "force-on",
-              },
-            },
-          },
         },
         -- Ruff: Linter & Formatter
         ruff = {
           cmd = { "ruff", "server" },
           filetypes = { "python" },
-          -- Force UTF-8 (align clients)
-          capabilities = {
-            offsetEncoding = { "utf-8" },
-          },
           root_dir = require("lspconfig").util.root_pattern("pyproject.toml", "ruff.toml", ".ruff.toml", ".git"),
           settings = {
             ruff = {
@@ -53,34 +39,38 @@ return {
       autocmds = {
         python_organize_imports = {
           cond = function(client, _)
-              return client.name == "ruff" and client.supports_method("textDocument/codeAction")
+            return client.name == "ruff" and client.supports_method "textDocument/codeAction"
           end,
           {
             event = "BufWritePre",
             desc = "Organize Imports (Python)",
             callback = function(args)
-               -- Use pcall to prevent saving from failing if Ruff errors out
-               local status = pcall(function()
-                  local clients = vim.lsp.get_clients({ bufnr = args.buf, name = "ruff" })
-                  local client = clients[1]
-                  if not client then return end
-                  
-                  local encoding = client.offset_encoding or "utf-8"
-                  local params = vim.lsp.util.make_range_params(nil, encoding)
-                  params.context = { only = { "source.organizeImports" }, diagnostics = {} }
-                  
-                  local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 1000)
-                  for _, res in pairs(result or {}) do
-                    for _, r in pairs(res.result or {}) do
-                      if r.edit then
-                        vim.lsp.util.apply_workspace_edit(r.edit, encoding)
-                      end
+              -- Use pcall to prevent saving from failing if Ruff errors out
+              pcall(function()
+                local clients = vim.lsp.get_clients { bufnr = args.buf, name = "ruff" }
+                local client = clients[1]
+                if not client then return end
+
+                local encoding = client.offset_encoding or "utf-8"
+                -- Use full document range instead of cursor position
+                local params = {
+                  textDocument = vim.lsp.util.make_text_document_params(args.buf),
+                  range = {
+                    start = { line = 0, character = 0 },
+                    ["end"] = { line = vim.api.nvim_buf_line_count(args.buf), character = 0 },
+                  },
+                  context = { only = { "source.organizeImports" }, diagnostics = {} },
+                }
+
+                local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 1000)
+                for _, res in pairs(result or {}) do
+                  for _, r in pairs(res.result or {}) do
+                    if r.edit then
+                      vim.lsp.util.apply_workspace_edit(r.edit, encoding)
                     end
                   end
-               end)
-               if not status then
-                  -- Optional: print("Ruff organize imports failed")
-               end
+                end
+              end)
             end,
           },
         },
@@ -119,7 +109,7 @@ return {
         {
           type = "python",
           request = "launch",
-          name = "Launch file (Ext Libs)", 
+          name = "Launch file (Ext Libs)",
           program = "${file}",
           justMyCode = false, -- Step into libs
         },

@@ -52,12 +52,6 @@ return {
           },
         },
       },
-      -- Formatting: Organize imports on save
-      formatting = {
-        format_on_save = {
-          allow_filetypes = { "go" },
-        },
-      },
       autocmds = {
         go_organize_imports = {
           cond = function(client, _) return client.name == "gopls" end,
@@ -70,9 +64,16 @@ return {
                if not client then return end
 
                local encoding = client.offset_encoding or "utf-8"
-               local params = vim.lsp.util.make_range_params(nil, encoding)
-               params.context = { only = { "source.organizeImports" } }
-               
+               -- Use full document range instead of cursor position
+               local params = {
+                 textDocument = vim.lsp.util.make_text_document_params(args.buf),
+                 range = {
+                   start = { line = 0, character = 0 },
+                   ["end"] = { line = vim.api.nvim_buf_line_count(args.buf), character = 0 },
+                 },
+                 context = { only = { "source.organizeImports" } },
+               }
+
                local result = vim.lsp.buf_request_sync(args.buf, "textDocument/codeAction", params, 3000)
                for _, res in pairs(result or {}) do
                  for _, r in pairs(res.result or {}) do
