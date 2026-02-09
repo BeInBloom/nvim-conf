@@ -3,11 +3,12 @@
 
 ---@type LazySpec
 return {
-  -- LSP Configuration for Go
+  -- LSP Configuration for Go (based on astrocommunity/pack/go)
   {
     "AstroNvim/astrolsp",
     ---@type AstroLSPOpts
     opts = {
+      ---@diagnostic disable-next-line: missing-fields
       config = {
         gopls = {
           cmd = { "gopls" },
@@ -15,7 +16,33 @@ return {
           root_dir = require("lspconfig").util.root_pattern("go.work", "go.mod", ".git"),
           settings = {
             gopls = {
-              gofumpt = true, -- Strict gofmt
+              -- CRITICAL: Enable completion for unimported packages
+              completeUnimported = true,
+              usePlaceholders = true,
+              
+              -- Formatting
+              gofumpt = true,
+              
+              -- Analyses
+              analyses = {
+                fieldalignment = false,
+                fillreturns = true,
+                nilness = true,
+                nonewvars = true,
+                shadow = true,
+                undeclaredname = true,
+                unreachable = true,
+                unusedparams = true,
+                unusedwrite = true,
+                useany = true,
+                ST1000 = false, -- Pkg comment
+                ST1003 = true,
+                ST1020 = false, -- Func doc
+                ST1021 = false, -- Type doc
+                ST1022 = false, -- Var doc
+              },
+              
+              -- Codelenses
               codelenses = {
                 gc_details = false,
                 generate = true,
@@ -26,6 +53,8 @@ return {
                 upgrade_dependency = true,
                 vendor = true,
               },
+              
+              -- Inlay hints
               hints = {
                 assignVariableTypes = true,
                 compositeLiteralFields = true,
@@ -35,19 +64,13 @@ return {
                 parameterNames = true,
                 rangeVariableTypes = true,
               },
-              analyses = {
-                unusedparams = true,
-                shadow = true, -- Shadowed vars
-                nilness = true,
-                unusedwrite = true,
-                useany = true,
-                ST1000 = false, -- Pkg comment
-                ST1020 = false, -- Func doc
-                ST1021 = false, -- Type doc
-                ST1022 = false, -- Var doc
-              },
-              staticcheck = true,
+              
+              -- Other settings
+              diagnosticsDelay = "500ms",
+              matcher = "Fuzzy",
+              symbolMatcher = "fuzzy",
               semanticTokens = true,
+              staticcheck = true,
             },
           },
         },
@@ -64,7 +87,6 @@ return {
                if not client then return end
 
                local encoding = client.offset_encoding or "utf-8"
-               -- Use full document range instead of cursor position
                local params = {
                  textDocument = vim.lsp.util.make_text_document_params(args.buf),
                  range = {
@@ -89,6 +111,17 @@ return {
     },
   },
 
+  -- Treesitter for Go
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      if opts.ensure_installed ~= "all" then
+        opts.ensure_installed =
+          require("astrocore").list_insert_unique(opts.ensure_installed, { "go", "gomod", "gosum", "gowork" })
+      end
+    end,
+  },
+
   -- DAP: Go Debugger
   {
     "leoluz/nvim-dap-go",
@@ -97,65 +130,12 @@ return {
       "mfussenegger/nvim-dap",
       {
         "jay-babu/mason-nvim-dap.nvim",
-        opts = { handlers = { delve = function() end } }, -- Ensure mason doesn't override
+        opts = function(_, opts)
+          opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, { "delve" })
+        end,
       },
     },
-    opts = {
-      -- Explicitly configure delve
-      delve = {
-        path = vim.fn.stdpath "data" .. "/mason/bin/dlv",
-        initialize_configurations = true,
-        show_stop_reason = true,
-      },
-      filetypes = { "go", "gomod" },
-    },
-    config = function(_, opts)
-      require("dap-go").setup(opts)
-      
-      -- Manual cleanly configs
-      local dap = require "dap"
-      dap.configurations.go = {
-        {
-          type = "go",
-          name = "Debug",
-          request = "launch",
-          program = "${file}",
-        },
-        {
-          type = "go",
-          name = "Debug (Args)",
-          request = "launch",
-          program = "${file}",
-          args = function()
-             local args_string = vim.fn.input "Arguments: "
-             return vim.split(args_string, " +")
-          end,
-        },
-        {
-          type = "go",
-          name = "Debug (Build Flags)",
-          request = "launch",
-          program = "${file}",
-          buildFlags = function()
-            return vim.fn.input "Build Flags: "
-          end,
-        },
-        {
-          type = "go",
-          name = "Debug test",
-          request = "launch",
-          mode = "test",
-          program = "${file}",
-        },
-        {
-          type = "go",
-          name = "Attach",
-          mode = "local",
-          request = "attach",
-          processId = require("dap.utils").pick_process,
-        },
-      }
-    end,
+    opts = {},
   },
 
   -- Golangci-lint via none-ls
@@ -167,10 +147,6 @@ return {
         null_ls.builtins.diagnostics.golangci_lint.with {
           condition = function(utils) return utils.root_has_file ".golangci.yml" end,
         },
-        -- We can optionally add formatting.gofumpt here if LSP one isn't enough, but gopls usually handles it.
-        -- null_ls.builtins.formatting.gofumpt,
-        -- null_ls.builtins.formatting.goimports,
-        -- null_ls.builtins.formatting.golines,
       })
     end,
   },
