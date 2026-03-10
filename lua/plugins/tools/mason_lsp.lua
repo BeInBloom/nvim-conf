@@ -8,6 +8,7 @@ return {
       "ruff",
       "gopls",
       "vtsls",
+      "svelte",
       "html",
       "cssls",
       "emmet_ls",

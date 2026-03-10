@@ -31,6 +31,7 @@ return {
         "scss",
         "less",
         "eruby",
+        "svelte",
       },
     })
   end,

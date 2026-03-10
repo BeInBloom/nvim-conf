@@ -16,6 +16,7 @@ return {
             "javascriptreact",
             "typescript",
             "typescriptreact",
+            "svelte",
             "html",
             "css",
             "scss",
