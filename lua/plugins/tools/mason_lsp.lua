@@ -9,6 +9,7 @@ return {
       "gopls",
       "vtsls",
       "svelte",
+      "tailwindcss",
       "html",
       "cssls",
       "emmet_ls",
