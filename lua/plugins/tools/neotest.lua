@@ -1,6 +1,3 @@
--- Neotest: Testing framework
--- Supports Go, Python, Rust
-
 return {
   "nvim-neotest/neotest",
   dependencies = {
@@ -12,42 +9,37 @@ return {
     "nvim-neotest/neotest-python",
     -- rustaceanvim provides its own adapter, no need to install one
   },
-  config = function()
-    require("neotest").setup {
+  opts = function()
+    return {
       adapters = {
-        -- Go adapter with experimental options for go.work support
-        require("neotest-go")({
+        require "neotest-go" {
           experimental = {
             test_table = true,
           },
-          -- Recursively discover tests in subdirectories
           recursive_run = true,
-          -- Arguments to pass to `go test`
           args = { "-count=1" },
-        }),
-        require("neotest-python")({
+        },
+        require "neotest-python" {
           dap = { justMyCode = false },
           runner = "pytest",
-        }),
-        require("rustaceanvim.neotest"),
+        },
+        require "rustaceanvim.neotest",
       },
-      -- Status signs
       status = {
         virtual_text = true,
         signs = true,
       },
-      -- Output settings
       output = {
         enabled = true,
         open_on_run = "short",
       },
-      -- Discovery settings
       discovery = {
         enabled = true,
         concurrent = 1,
       },
     }
   end,
+  config = function(_, opts) require("neotest").setup(opts) end,
   keys = {
     { "<Leader>T", desc = "Test" },
     {

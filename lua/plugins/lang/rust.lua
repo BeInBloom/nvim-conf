@@ -1,5 +1,4 @@
--- Rust Language Support
--- rust-analyzer + codelldb via rustaceanvim
+local lsp = require "utils.lsp"
 
 ---@type LazySpec
 return {
@@ -11,24 +10,15 @@ return {
       server = {
         on_attach = function(client, bufnr)
           require("astrolsp").on_attach(client, bufnr)
-
-          -- Keybinding: Organize imports (remove unused)
-          vim.keymap.set("n", "<Leader>oi", function()
-            vim.lsp.buf.code_action({
-              context = { only = { "source.organizeImports" }, diagnostics = {} },
-              apply = true,
-            })
-          end, { buffer = bufnr, desc = "Organize imports" })
-
-          -- Format on save for Rust (rustfmt only)
+          lsp.map_organize_imports(bufnr)
           vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = bufnr,
             callback = function()
-              vim.lsp.buf.format({
+              vim.lsp.buf.format {
                 bufnr = bufnr,
                 async = false,
                 timeout_ms = 3000,
-              })
+              }
             end,
           })
         end,
@@ -53,7 +43,6 @@ return {
             procMacro = {
               enable = true,
             },
-            -- Use default rustfmt settings (like gofmt approach)
             rustfmt = {
               extraArgs = {},
             },
@@ -61,25 +50,16 @@ return {
         },
       },
     },
-    config = function(_, opts)
-      vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {})
-    end,
+    config = function(_, opts) vim.g.rustaceanvim = vim.tbl_deep_extend("keep", vim.g.rustaceanvim or {}, opts or {}) end,
   },
 
   -- Disable independent rust_analyzer (let rustaceanvim frame it)
   {
     "AstroNvim/astrolsp",
-    ---@type AstroLSPOpts
     opts = {
       handlers = {
-        rust_analyzer = false, 
-      },
-      filetypes = {
-        rust = false, -- let rustaceanvim handle filetype stuff if needed (usually fine to keep)
+        rust_analyzer = false,
       },
     },
   },
-  
-  -- Mason Ensure Installed (redundant if using tools/mason.lua, but safe to keep for context)
-  -- We already added 'codelldb' and 'rust_analyzer' to tools/mason.lua
 }
