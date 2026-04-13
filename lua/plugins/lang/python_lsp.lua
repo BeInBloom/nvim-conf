@@ -30,7 +30,7 @@ return {
     })
     opts.autocmds = astrocore.extend_tbl(opts.autocmds or {}, {
       python_organize_imports = {
-        cond = function(client) return client.name == "ruff" and client.supports_method "textDocument/codeAction" end,
+        cond = function(client) return client.name == "ruff" and client:supports_method "textDocument/codeAction" end,
         {
           event = "BufWritePre",
           desc = "Organize imports (Python)",

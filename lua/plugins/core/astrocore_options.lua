@@ -4,6 +4,7 @@ return {
   opts = function(_, opts)
     opts.options = require("astrocore").extend_tbl(opts.options, {
       opt = {
+        autoindent = true,
         number = true,
         relativenumber = true,
         scrolloff = 15,

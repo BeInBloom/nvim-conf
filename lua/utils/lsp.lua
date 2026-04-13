@@ -16,19 +16,23 @@ local function get_client(bufnr, client_name)
   return vim.lsp.get_clients({ bufnr = bufnr, name = client_name })[1]
 end
 
-local function run_command(action)
+local function run_command(bufnr, client, action)
   local command = action.command
+  if not client or not command then
+    return
+  end
+
   if type(command) == "table" then
-    vim.lsp.buf.execute_command(command)
+    client:exec_cmd(command, { bufnr = bufnr })
   elseif type(command) == "string" then
-    vim.lsp.buf.execute_command(action)
+    client:exec_cmd(action, { bufnr = bufnr })
   end
 end
 
 local function apply_action(bufnr, client, action)
   local encoding = client and client.offset_encoding or "utf-16"
   if action.edit then vim.lsp.util.apply_workspace_edit(action.edit, encoding) end
-  run_command(action)
+  run_command(bufnr, client, action)
 end
 
 function M.apply_code_action(bufnr, kind, client_name, timeout_ms)
